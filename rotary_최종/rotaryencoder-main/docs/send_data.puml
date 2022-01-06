@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+alt
+else 시간 동기화 플래그 거짓
+    rnote over Sensor
+    데이터 저장
+    endrnote
+else 시간 동기화 플래그 참
+    Sensor -> Server: 수집 또는 미전송 데이터 전송 (C)
+    alt CheckSum 통과
+        Sensor <- Server: 응답 데이터 전송 (O)
+    else CheckSum 실패
+        Sensor <- Server: 응답 데이터 전송 (X)
+        rnote over Sensor
+        데이터 저장
+        endrnote
+    end
+else 수신 대기시간 오버
+    rnote over Sensor
+    데이터 저장
+    endrnote
+
+end
+@enduml

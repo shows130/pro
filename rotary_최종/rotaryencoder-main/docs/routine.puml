@@ -1,0 +1,58 @@
+@startuml
+(*) -> "부팅"
+
+partition 대기루틴 {
+"부팅" -> "마지막 시간동기화"
+    if "마지막 시간동기화" then
+      --> [24시간이내]  === WaitRoutine ===
+    else
+      ->[24시간이상] 시간동기화
+    endif
+}
+
+partition 시간동기화 {
+  if "마지막 요청시간" then
+    --> [1분이내] "시간동기화 보류"
+    -> === EndTimeSync ===
+  else
+    --> [1분이상] "시간동기화 요청"
+    if "요청" then
+      --> [성공] "시간동기화 플래그 True"
+      --> === EndTimeSync ===
+
+    else
+      --> [통신실패] "시간동기화 플래그 False"
+      --> === EndTimeSync ===
+    endif
+  endif
+}
+
+시작신호 -> [인터럽트] 펄스카운트
+partition 펄스카운트 {
+  펄스카운팅 -> 펄스카운팅
+}
+
+
+펄스카운팅 -> [인터럽트] 끝신호
+-> "전송루틴"
+partition 전송루틴 {
+    -> "수집데이터 전송시도"
+    if "시간동기화 플래그 값 상태" then
+        -> [True] "전송"
+        if "전송 성공" then
+          --> [성공] "미전송 데이터 유무 확인"
+          if "미전송 데이터" then
+            --> [유] "수집시간 보상"
+            -> "전송"
+          else
+            --> [무] === EndSendRoutine ===
+          endif
+        else
+          --> [실패] "데이터 저장"
+        endif
+    else
+        --> [False] "데이터 저장"
+        --> === EndSendRoutine ===
+    endif
+}
+@enduml

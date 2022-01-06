@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% block head %}
+<script>
+    function home(){
+                location.href = "/" ;
+            }
+</script>
+{% endblock %} 
+{% block body %}
+<div class="jumbotron" id="Ta">
+    <h1 class="display-4" onclick="home()" style="cursor: pointer;">Data</h1>
+    <form id="searchForm" method="get" action="/search">
+        <input type="text" name="ID" placeholder="ID" value="">
+        <input type="text" name="DATE" placeholder="OOOO-OO-OO" value="">
+        <input type="submit" value="확인">
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>DATE/TIME</th>
+                <th>PULSE</th>
+                <th>VALUE(mm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in datum %}
+                <tr>
+                    <td>{{data[1]}}</td>
+                    <td>{{data[2]}} {{data[3]}}</td>
+                    <td>{{data[5]}}</td>
+                    <td>{{data[4]}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+	</table>
+</div>
+{% endblock %}

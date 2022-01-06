@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+Sensor -> Server: 시간 동기화 요청 (T)
+alt 시간 동기화 응답
+    Sensor <- Server: 시간 동기화 응답 (T)
+    rnote over Sensor
+    시간 동기화 플래그 참
+    endrnote
+else 서버 응답 없음 또는 접속 실패
+    rnote over Sensor
+    시간 동기화 플래그 거짓
+    endrnote
+end
+@enduml
